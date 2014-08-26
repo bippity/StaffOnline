@@ -36,11 +36,13 @@ namespace StaffOnline
         }
         #endregion
 
+        private bool[] Hidden = new bool[256];
 
         public override void Initialize()
         {
             ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreet);
             TShockAPI.Hooks.PlayerHooks.PlayerCommand += OnCommand;
+            Commands.ChatCommands.Add(new Command("staffonline", Hide, "staffonline"));
         }
 
         protected override void Dispose(bool disposing)
@@ -59,19 +61,8 @@ namespace StaffOnline
                 return;
             TSPlayer player = TShock.Players[args.Who];
 
-            var sb = new StringBuilder();
-            foreach (TSPlayer user in TShock.Players)
-            {
-                if (user != null && user.Active && user.Group.HasPermission("staffonline"))
-                {
-                    if (sb.Length != 0)
-                    {
-                        sb.Append(", ");
-                    }
-                    sb.Append(user.Name);
-                }
-            }
-            player.SendMessage("Staff Online: " + sb.ToString(), Color.Cyan);
+            player.SendMessage(getStaff(), Color.Cyan);
+            return;
         }
 
         public void OnCommand(PlayerCommandEventArgs args)
@@ -82,21 +73,42 @@ namespace StaffOnline
 
             if (args.CommandName.Equals("who") || args.CommandName.Equals("online") || args.CommandName.Equals("playing"))
             {
-                var sb = new StringBuilder();
-                foreach (TSPlayer user in TShock.Players)
-                {
-                    if(user != null && user.Active && user.Group.HasPermission("staffonline"))
-                    {
-                        if (sb.Length != 0)
-                        {
-                            sb.Append(", ");
-                        }
-                        sb.Append(user.Name);
-                    }
-                }
-                player.SendMessage("Staff Online: " + sb.ToString(), Color.Cyan);
+                player.SendMessage(getStaff(), Color.Cyan);
                 return;
             }
+        }
+
+        public string getStaff()
+        {
+            var sb = new StringBuilder();
+            foreach (TSPlayer user in TShock.Players)
+            {
+                if (user != null && user.Active && user.Group.HasPermission("staffonline") && !Hidden[user.Index])
+                {
+                    if (sb.Length != 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(user.Name);
+                }
+            }
+            String output = "Staff Online: " + sb.ToString();
+            
+            return output;
+        }
+
+        public void Hide(CommandArgs args)
+        {
+            Hidden[args.Player.Index] = !Hidden[args.Player.Index];
+            if (Hidden[args.Player.Index])
+            {
+                args.Player.SendSuccessMessage("You are now hidden from 'Staff Online'");
+            }
+            else
+            {
+                args.Player.SendSuccessMessage("You are no longer hidden from 'Staff Online'");
+            }
+            return;
         }
     }
 }
