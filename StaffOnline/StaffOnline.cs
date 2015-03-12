@@ -9,7 +9,7 @@ using TerrariaApi.Server;
 
 namespace StaffOnline
 {
-    [ApiVersion(1, 16)]
+    [ApiVersion(1, 17)]
     public class StaffOnline : TerrariaPlugin
     {
         #region Plugin Info
