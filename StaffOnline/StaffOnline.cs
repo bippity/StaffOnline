@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Microsoft.Xna.Framework;
 using TShockAPI;
 using TShockAPI.Hooks;
 using Terraria;
@@ -7,7 +8,7 @@ using TerrariaApi.Server;
 
 namespace StaffOnline
 {
-	[ApiVersion(1, 23)]
+	[ApiVersion(2, 0)]
     public class StaffOnline : TerrariaPlugin
     {
         #region Plugin Info
